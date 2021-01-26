@@ -36,4 +36,28 @@ blogsRouter.delete('/:id', async (request, response, next) => {
   response.status(200).send({ message: 'deleted ' + id });
 });
 
+blogsRouter.put('/:id', async (request, response, next) => {
+  if (!request.params.id) {
+    return response.status(400).send({ message: ' Missing id' });
+  }
+  if (!request.body.likes) {
+    return response.status(400).send({ message: ' Missing likes input' });
+  }
+
+  const likes = request.body.likes;
+  const id = request.params.id;
+
+  const updatedBlog = await Blog.findOne({ _id: id }).catch(err => {
+    console.log('err', err);
+    next(err);
+  });
+  updatedBlog.likes = likes;
+  updatedBlog.save().catch(function (err) {
+    console.log('err', err);
+    next(err);
+  });
+  return response.send({
+    message: `updated blog: ${updatedBlog}, likes to ${likes}`
+  });
+});
 module.exports = blogsRouter;
