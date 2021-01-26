@@ -20,4 +20,20 @@ blogsRouter.post('/', async (request, response) => {
   }
 });
 
+blogsRouter.delete('/:id', async (request, response, next) => {
+  if (!request.params.id) {
+    return response.status(400).send({ message: ' Missing id' });
+  }
+
+  const id = request.params.id;
+  await Blog.findByIdAndDelete({ _id: id }).catch(err => {
+    console.log('err', err);
+    return next(err);
+  });
+
+  //if it gets here delete succeeded
+  console.log('deleted id ' + id);
+  response.status(200).send({ message: 'deleted ' + id });
+});
+
 module.exports = blogsRouter;
