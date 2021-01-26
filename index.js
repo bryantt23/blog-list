@@ -1,3 +1,6 @@
+require('dotenv').config();
+const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qx7so.mongodb.net/blog_list?retryWrites=true&w=majority`;
+
 const http = require('http');
 const express = require('express');
 const app = express();
@@ -13,7 +16,7 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema);
 
-const mongoUrl = 'mongodb://localhost/bloglist';
+// const mongoUrl = 'mongodb://localhost/bloglist';
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
