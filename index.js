@@ -1,13 +1,11 @@
-require('dotenv').config();
-const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qx7so.mongodb.net/blog_list?retryWrites=true&w=majority`;
+const logger = require('./utils/logger');
+const config = require('./utils/config');
 
 const http = require('http');
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
-
-const { info, error } = require('./utils/logger');
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -19,7 +17,7 @@ const blogSchema = new mongoose.Schema({
 const Blog = mongoose.model('Blog', blogSchema);
 
 // const mongoUrl = 'mongodb://localhost/bloglist';
-mongoose.connect(mongoUrl, {
+mongoose.connect(config.mongoUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
@@ -43,7 +41,6 @@ app.post('/api/blogs', (request, response) => {
   });
 });
 
-const PORT = 3003;
-app.listen(PORT, () => {
-  info(`Server running on port ${PORT}`);
+app.listen(config.PORT, () => {
+  logger.info(`Server running on port ${config.PORT}`);
 });
