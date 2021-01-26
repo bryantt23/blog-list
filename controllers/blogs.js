@@ -7,10 +7,17 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body);
+  if (!request.body.title || !request.body.author) {
+    return response.status(400).send({ message: ' Missing input' });
+  }
 
-  const result = await blog.save();
-  return response.status(201).json(result);
+  try {
+    const blog = new Blog(request.body);
+    const result = await blog.save();
+    return response.status(201).json(result);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = blogsRouter;
