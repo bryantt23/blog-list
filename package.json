@@ -22,5 +22,8 @@
   },
   "jest": {
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.0"
   }
 }
