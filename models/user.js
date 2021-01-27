@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -10,7 +11,13 @@ const userSchema = new mongoose.Schema({
     minlength: 3,
     required: true
   },
-  passwordHash: String
+  passwordHash: String,
+  blogs: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ]
 });
 
 module.exports = mongoose.model('User', userSchema);

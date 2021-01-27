@@ -44,9 +44,20 @@ usersRouter.post(
   }
 );
 
+// https://stackoverflow.com/questions/38051977/what-does-populate-in-mongoose-mean
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({});
-  return response.json(users);
+  await User.find({})
+    .populate('blogs', 'url title author id')
+    .exec(function (err, users) {
+      var userMap = {};
+
+      users.forEach(function (user) {
+        userMap[user._id] = user;
+      });
+
+      return response.send(userMap);
+    });
+  // return response.json(users);
 });
 
 /*
