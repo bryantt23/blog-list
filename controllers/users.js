@@ -3,10 +3,18 @@ const usersRouter = require('express').Router();
 const User = require('../models/user');
 const { body, validationResult } = require('express-validator');
 
+// https://express-validator.github.io/docs/custom-validators-sanitizers.html
+// https://stackoverflow.com/questions/27482806/check-if-id-exists-in-a-collection-with-mongoose
 usersRouter.post(
   '/',
   body('password').exists(),
   body('password').isLength({ min: 3 }),
+  body('username').custom(async value => {
+    const count = await User.count({ username: value });
+    if (count) {
+      return Promise.reject('Username already exists');
+    }
+  }),
 
   // https://www.freecodecamp.org/news/how-to-make-input-validation-simple-and-clean-in-your-express-js-app-ea9b5ff5a8a7/
   // https://express-validator.github.io/docs/
