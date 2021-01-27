@@ -1,23 +1,40 @@
 const bcrypt = require('bcrypt');
 const usersRouter = require('express').Router();
 const User = require('../models/user');
+const { body, validationResult } = require('express-validator');
 
-usersRouter.post('/', async (request, response) => {
-  const body = request.body;
+usersRouter.post(
+  '/',
+  body('password').exists(),
+  body('password').isLength({ min: 3 }),
 
-  const saltRounds = 10;
-  const passwordHash = await bcrypt.hash(body.password, saltRounds);
+  // https://www.freecodecamp.org/news/how-to-make-input-validation-simple-and-clean-in-your-express-js-app-ea9b5ff5a8a7/
+  // https://express-validator.github.io/docs/
+  // https://express-validator.github.io/docs/validation-chain-api.html
+  async (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
 
-  const user = new User({
-    username: body.username,
-    name: body.name,
-    passwordHash
-  });
+    const body = request.body;
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
-  const savedUser = await user.save().catch(err => console.log(err));
+    const user = new User({
+      username: body.username,
+      name: body.name,
+      passwordHash
+    });
 
-  response.json(savedUser);
-});
+    const savedUser = await user.save().catch(err => {
+      console.log(err);
+      return response.status(422).json({ errors: err });
+    });
+
+    response.json(savedUser);
+  }
+);
 
 usersRouter.get('/', async (request, response) => {
   const users = await User.find({});

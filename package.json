@@ -24,6 +24,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "bcrypt": "^5.0.0"
+    "bcrypt": "^5.0.0",
+    "express-validator": "^6.9.2"
   }
 }
