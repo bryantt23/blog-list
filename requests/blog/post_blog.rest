@@ -1,8 +1,9 @@
 POST http://localhost:3003/api/blogs HTTP/1.1
-content-type: application/json
+content-type: application/json 
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNjYyIsImlkIjoiNjAxMTJjNzhjOTc4OWI0Y2I4OWUzZmY5IiwiaWF0IjoxNjExODczODYyfQ.XatUc1u1CxvuxwLH6-IQj4I5SR8EusYcJj8rBdW-4xE
 
 {
-    "title": "s",
-    "author": "",
-    "url":"www.d.com"
+    "title": "ccc post",
+    "author": "ccc",
+    "url":"www.ccc.com"
 }
