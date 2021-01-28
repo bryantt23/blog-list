@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
-    "express-validator": "^6.9.2"
+    "express-validator": "^6.9.2",
+    "jsonwebtoken": "^8.5.1"
   }
 }
