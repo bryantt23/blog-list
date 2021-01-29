@@ -3,18 +3,23 @@ const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
+async function getUser(request) {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!decodedToken || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' });
+  }
+
+  const user = await User.findOne({ _id: decodedToken.id });
+  return user;
+}
+
 blogsRouter.post('/', async (request, response) => {
   if (!request.body.title || !request.body.author) {
     return response.status(400).send({ message: ' Missing input' });
   }
 
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET);
-    if (!decodedToken || !decodedToken.id) {
-      return response.status(401).json({ error: 'token missing or invalid' });
-    }
-
-    const user = await User.findOne({ _id: decodedToken.id });
+    const user = getUser(request);
     const blog = new Blog({ ...request.body, user });
     const result = await blog.save();
     // https://stackoverflow.com/questions/33049707/push-items-into-mongo-array-via-mongoose
@@ -41,20 +46,70 @@ blogsRouter.get('/', async (request, response) => {
     });
 });
 
+// https://stackoverflow.com/questions/2342579/http-status-code-for-update-and-delete
+// https://stackoverflow.com/questions/14763721/mongoose-delete-array-element-in-document-and-save
 blogsRouter.delete('/:id', async (request, response, next) => {
   if (!request.params.id) {
     return response.status(400).send({ message: ' Missing id' });
   }
 
-  const id = request.params.id;
-  await Blog.findByIdAndDelete({ _id: id }).catch(err => {
-    console.log('err', err);
-    return next(err);
-  });
+  try {
+    //later throw exception for no user, no blog
 
-  //if it gets here delete succeeded
-  console.log('deleted id ' + id);
-  response.status(200).send({ message: 'deleted ' + id });
+    //
+
+    const blogId = request.params.id;
+    const user = await getUser(request);
+    const blog = await Blog.findOne({ _id: blogId });
+    const blog_Id = blog._id;
+    const userId = user._id;
+
+    // console.log('blog  ' + blog);
+    console.log('user  ' + user);
+    // console.log('user blogs ' + user.blogs);
+    console.log('blog_Id ' + blog_Id);
+    console.log('userId ' + userId);
+    const userBlogs = user.blogs;
+    console.log('userBlogs ' + userBlogs);
+    //user wrote blog
+    if (userBlogs.includes(blogId)) {
+      await user.blogs.pull({ _id: blogId }); // removed
+      // const updatedBlogs = userBlogs.filter(blog => {
+      //   console.log(blog);
+      //   console.log(blog.id);
+      //   console.log(blog._id);
+      //   return blog._id !== blog_Id;
+      // });
+      // user.blogs = updatedBlogs;
+      // await user.save();
+      console.log('userBlogs ' + userBlogs);
+      await Blog.findByIdAndRemove(blog_Id);
+      //remove from user
+      console.log('will delete your blog');
+      response
+        .status(200)
+        .send({ message: `Deleted blog id ${blog_Id} by user ${user.name}` });
+
+      //delete from blog
+    } else {
+      console.log('you did not write, cannot delete blog');
+      //can't delete
+      response
+        .status(401)
+        .send({ message: 'you did not write, cannot delete blog' });
+    }
+
+    // response.status(200).send({ message: user + ' ' + blogId });
+    // response.status(200).send({ message: 'deleted ' + blogId });
+  } catch (error) {
+    console.log('error', error);
+    return next(error);
+  }
+
+  // await Blog.findByIdAndDelete({ _id: blogId }).catch(err => {
+  //   console.log('err', err);
+  //   return next(err);
+  // });
 });
 
 blogsRouter.put('/:id', async (request, response, next) => {
