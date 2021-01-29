@@ -1,9 +1,9 @@
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json 
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNjYyIsImlkIjoiNjAxMTJjNzhjOTc4OWI0Y2I4OWUzZmY5IiwiaWF0IjoxNjExODczODYyfQ.XatUc1u1CxvuxwLH6-IQj4I5SR8EusYcJj8rBdW-4xE
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZmZiIsImlkIjoiNjAxMTNmZGMyM2RiMTIyMmM0NTA2MzkzIiwiaWF0IjoxNjExODgxMzExfQ.gEMBlgODNiXAOQmpdNWK9zmPPu9MOhFmg5qOGdltQ3w
 
 {
-    "title": "ccc post",
-    "author": "ccc",
-    "url":"www.ccc.com"
+    "title": "455pm 1/28 post",
+    "author": "fdddff",
+    "url":"www.xxxffsddf.com"
 }

@@ -3,23 +3,14 @@ const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
-const getTokenFrom = req => {
-  const authorization = req.get('authorization');
-  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
-    return authorization.substring(7);
-  }
-  return null;
-};
-
 blogsRouter.post('/', async (request, response) => {
   if (!request.body.title || !request.body.author) {
     return response.status(400).send({ message: ' Missing input' });
   }
 
   try {
-    const token = getTokenFrom(request);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    if (!token || !decodedToken || !decodedToken.id) {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    if (!decodedToken || !decodedToken.id) {
       return response.status(401).json({ error: 'token missing or invalid' });
     }
 
@@ -32,7 +23,7 @@ blogsRouter.post('/', async (request, response) => {
     return response.status(201).json(result);
   } catch (error) {
     console.log(error);
-    return response.status(401).json({ message: error });
+    return response.status(401).json({ error });
   }
 });
 

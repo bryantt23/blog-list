@@ -1,6 +1,7 @@
 const logger = require('./utils/logger');
 const config = require('./utils/config');
 const mongoose = require('mongoose');
+const middleware = require('./utils/middleware');
 
 const http = require('http');
 const express = require('express');
@@ -19,6 +20,7 @@ mongoose.connect(config.mongoUrl, {
 
 app.use(cors());
 app.use(express.json());
+app.use(middleware.tokenExtractor);
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
