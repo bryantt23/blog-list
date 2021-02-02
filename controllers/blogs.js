@@ -19,8 +19,8 @@ blogsRouter.post('/', async (request, response) => {
   }
 
   try {
-    const user = getUser(request);
-    const blog = new Blog({ ...request.body, user });
+    const user = await getUser(request);
+    const blog = await new Blog({ ...request.body, user });
     const result = await blog.save();
     // https://stackoverflow.com/questions/33049707/push-items-into-mongo-array-via-mongoose
     user.blogs.push(blog);
