@@ -15,7 +15,7 @@ async function getUser(request) {
 
 blogsRouter.post('/', async (request, response) => {
   if (!request.body.title || !request.body.author) {
-    return response.status(400).send({ message: ' Missing input' });
+    return response.status(400).send({ error: ' Missing input' });
   }
 
   try {
