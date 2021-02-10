@@ -13,6 +13,49 @@ async function getUser(request) {
   return user;
 }
 
+// POST http://localhost:3001/api/blogs/:id/comments HTTP/1.1
+blogsRouter.post('/:id/comments', async (request, response, next) => {
+  if (!request.params.id) {
+    return response.status(400).send({ message: ' Missing id' });
+  }
+
+  try {
+    const blogId = request.params.id;
+    console.log(blogId);
+    const comment = request.body.comment;
+    console.log('comment', comment);
+
+    let blog = await Blog.findOne({ _id: blogId });
+    const blog_Id = blog._id;
+    let { comments } = blog;
+    if (!comments) {
+      comments = [];
+    }
+    comments.push(comment);
+    blog.comments = comments;
+
+    console.log('blog_Id ', blog_Id);
+    console.log('blog ', blog);
+    await blog.save().catch(function (err) {
+      console.log('err', err);
+      next(err);
+    });
+
+    console.log('blog ', blog);
+    return response.send({
+      message: `updated blog: ${blog}, commments to ${comments}`
+    });
+  } catch (error) {
+    console.log('error', error);
+    return next(error);
+  }
+
+  // await Blog.findByIdAndDelete({ _id: blogId }).catch(err => {
+  //   console.log('err', err);
+  //   return next(err);
+  // });
+});
+
 blogsRouter.post('/', async (request, response) => {
   if (!request.body.title || !request.body.author) {
     return response.status(400).send({ error: ' Missing input' });

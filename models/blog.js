@@ -9,7 +9,8 @@ const blogSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
-  }
+  },
+  comments: [{ type: String }]
 });
 
 // https://stackoverflow.com/a/56296370
